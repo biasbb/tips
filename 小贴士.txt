@@ -56,7 +56,7 @@
 
     扩展串口（PCIe） 对应的是NVMe协议，为厉害的固态硬盘量身定做
 
-  - 物理接口：SATA、M.2
+  - 物理接口：SATA、M.2(也有pci-e接口的，理论上比M.2 socket3更快，因为不需要转接直接到位，但是成本较高，一般用于高端市场)
 
      其实物理接口用什么和速度是没什么关系的，如果是SATA接口那么就是使用SATA通道走AHCI协议。而M.2接口有两种接口模式socket2和socket3，socket2对应的接口是bkey，对应的是传输模式为sata,如果用这个话那么用M.2物理接口和SATA是没有区别的。而socket3对应的接口是mkey，走的是PCI-e，这个时候才用的是更快的PCI-e。注意，走pcie不等同于支持nvme，pcie硬盘也有支持AHCI的
 
@@ -64,9 +64,9 @@
 
       PCIE相比SATA有更快的速度，SATA总线一般采用AHCI协议，而PCIE一般使用NAMe协议。
 
-      但需要注意的是使用NVMe的一定使用PCI-e，但是使用PCI-e的未必使用Nvme，也可能使用AHCI
+      **但需要注意的是使用NVMe的一定使用PCI-e，但是使用PCI-e的未必使用Nvme，也可能使用AHCI**
 
-      目前来看PCI-e搭配NVMe是最快的
+      **目前来看PCI-e搭配NVMe是最快的**
 
   - **<u>*总结</u>***：ssd的快慢和物理接口用什么没哈关系，主要看通道的选择和传输协议的选择，使用PCI-e的比SATA的更快，而且使用PCI-e的里面使用NVMe的最快
 
