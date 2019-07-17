@@ -3,6 +3,6 @@
   - protected：对其派生类和友元类可见，即派生类和友元类的成员函数可以访问它，对其他不可见，包括类对象。
   - private：只有本类的成员函数可以访问
 - 继承方式
-  - public：父类的public和protected成员到了子类中仍是子类的public和protected成员，子类内成员函数可以直接访问，但是子类对象只能访问public不能访问protected。父类的私有成员子类不可见。
+  - public：父类的public和protected成员到了子类中仍是子类的public和protected成员，子类内成员函数可以直接访问，但是子类对象只能访问public不能访问protected。父类的私有成员子类不可见
   - protected：父类的public和protected成员到了子类变成了子类的protected成员，子类内的成员函数可以直接访问，子类对象统统不能访问。父类的私有成员对子类不可见。
   - private：父类的public和protected到了子类变成了子类的private成员，只有子类的成员函数可以访问，类对象不行。父类的private对子类不可见
