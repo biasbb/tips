@@ -1,0 +1,264 @@
+- ### 1.两数之和
+
+  > 
+
+  这里用到了vector，是容器的意思，相当于一个数组而且里面什么数据类型都能放。
+
+  声明用vector<int> a
+
+  往里面加元素用a.push_back()，随便加什么都行
+
+  a.size即为长度，即元素的个数
+
+  访问的话和数组一样用a[]就行
+
+  **普通数组的长度用sizeof(a)/sizeof(a[0])，这样表示**
+
+  - 遍历穷举
+  
+    ```c++
+    class Solution
+    {
+      public:
+      vector<int> twosum(vector<int> num,int target)
+      {
+        vector<int> a;
+        for(int i=0;i<num.size;i++)
+        {
+          for(int j=i+1;j<num.size;j++)
+          {
+            if(num[i]+num[j]==target)
+            {
+              a.push_back(i);
+              a.push_back(j);
+            }
+          }
+        }
+        return a;
+      }
+  };
+    ```
+
+    时间复杂度为O(n^2)，时间复杂度过高，因此尝试改进
+
+  - 使用哈希方式
+  
+    ```c++
+    class Solution 
+    {
+        public:
+        vector<int> twoSum(vector<int> nums, int target) 
+        {
+            unordered_map<int,int> m;
+            vector<int> rec;
+            for(int i=0;i<nums.size();i++)
+                m[nums[i]]=i;   //把所有的元素都放到哈希表里，key即为数，value为数在nums中的顺序数，m即给定一个数即nums[i]就可以得到它的value即顺序数i
+            for(int i = 0 ; i < nums.size() ; i ++)
+            {
+                int t = target - nums[i];
+                if(m.count(t)&&m[t]!=i)   //count函数的作用是返回map中t元素的个数，因为        map中元素是不能重复的，因此count的取值要么为1要么为0.同时题目中要求一个数不能用两次，因此这个t的顺序数不能和i一样
+                {
+                     rec.push_back(i);
+                     rec.push_back(m[t]);
+                     break;
+                }
+            }
+            return rec;
+         }
+  };
+    ```
+
+    使用了unordered_map<int,int> m定义了一个名为m的关键字和值都为int的哈希表，哈希就是给定一个关键字key能够找到对应的value值。key不能重复，但是不同的key可能会有相同的value就是所谓的冲突。
+  
+- ### 7.整数反转
+
+  > 将一个给定的32位有符号整数，将数字每位上的整数进行反转。
+
+  用x%10取出x的最后一位，设为pop。翻转后的数字用ans存贮，ans默认为0，然后通过ans=ans*10+x%10来不断迭代。
+
+  还有个要注意的就是溢出问题，int是4个字节即32位，有符号的话INT_MAX即2的32次方减一即2147483647，同样得出INT_MIN。不能溢出也就是不能比max大不能比min小。
+
+  溢出即ans*10+pop>INT_MAX，有两种可能：
+
+  - ans>INT_MAX/10
+- ans==INT_MAX/10且pop>7(这里的7即为MAX的个位数)
+  
+
+同样可以得出小于min的溢出条件。
+
+```c++
+  class Solution
+  {
+      public:
+      int reverse(int x) 
+      {
+          int ans=0;
+          while(x)
+          {
+              int pop=x%10;
+              if(ans>INT_MAX/10||(ans==INT_MAX/10&&pop>7))
+                  return 0;
+              if(ans<INT_MIN/10||(ans==INT_MIN/10&&pop<-8))
+                  return 0;
+              ans=ans*10+pop;
+              x/=10;
+          }
+          return ans;     
+      }
+  };
+```
+
+- ### 9.回文数
+
+  > 一个数倒过来还是它本身，负数不行
+
+  - 第一种利用类似于上面翻转整数的方法，再判断一下溢出就性
+
+    ```c++
+  class Solution
+    {
+      public:
+        bool isPalindrome(int x)
+      {
+            if(x<0)
+              return false;
+            int ans=0;
+            int y=x;
+            while(x)
+            {
+                int pop=x%10;
+                if(ans>INT_MAX/10||(ans==INT_MAX/10&&pop>7))
+                    return false;
+                ans=ans*10+pop;
+                x/=10;
+            }
+            if(y==ans)
+                return true;
+            return false;
+        }
+             
+    };
+    ```
+  
+  - 第二种换了种循环的判断方法，while(x > ans)。跳出循环后如果是偶数个数字，那么x==ans就表明是回文数；如果是奇数个数字，那么跳出循环后x==ans/10就表明是回文数。
+  
+    ```c++
+    class Solution 
+    {
+        public:
+        bool isPalindrome(int x) 
+         {
+           if(x < 0 || (x % 10 == 0 && x != 0)) 
+                 return false;
+           int revertedNumber = 0;
+             while(x > revertedNumber) 
+             {
+                revertedNumber = revertedNumber*10+x%10;
+                x /= 10;
+             }
+             if(x == revertedNumber || x == revertedNumber/10)
+                 return true;
+             return false;
+          }   
+    };
+    ```
+
+- ### 13.罗马数字转整数
+
+  要注意一个，要把string类型赋值给字符数组时，例如：
+
+  string s="abc"
+
+  **char * a=const_cast<char *>(s.c_str())**
+
+  - 暴力例举
+
+    ```c++
+  class Solution {
+    public:
+      int romanToInt(string s) {
+            char *a=const_cast<char*>(s.c_str());;
+            int sum=0;
+            for(int i=0;i<strlen(a);i++)
+            {
+                if(a[i]=='I'&&a[i+1]!='V'&&a[i+1]!='X')
+                    sum+=1;
+                if(a[i]=='I'&&a[i+1]=='V')
+                    sum+=4;
+                if(a[i]=='I'&&a[i+1]=='X')
+                    sum+=9;
+                if(a[i]=='V'&&a[i-1]!='I')
+                    sum+=5;
+                if(a[i]=='X'&&a[i+1]!='L'&&a[i+1]!='C'&&a[i-1]!='I')
+                    sum+=10;
+                if(a[i]=='X'&&a[i+1]=='L')
+                    sum+=40;
+                if(a[i]=='X'&&a[i+1]=='C')
+                    sum+=90;
+                if(a[i]=='L'&&a[i-1]!='X')
+                    sum+=50;
+                if(a[i]=='C'&&a[i+1]!='D'&&a[i+1]!='M'&&a[i-1]!='X')
+                    sum+=100;
+                if(a[i]=='C'&&a[i+1]=='D')
+                    sum+=400;
+                if(a[i]=='C'&&a[i+1]=='M')
+                    sum+=900;
+                if(a[i]=='D'&&a[i-1]!='C')
+                    sum+=500;
+                if(a[i]=='M'&&a[i-1]!='C')
+                    sum+=1000;
+              }
+          return sum;
+         }
+    };
+    ```
+
+  - 使用哈希方式，建立哈希表m对应每个字母与每个数字，依次遍历字符串的每个字符，当
+
+    m[s[i]]>=m[s[i+1]]时直接加上s[i]，当m[s[i]]<m[s[i+1]]时，就生成组合，输出后一位减前一位的差，同时i自加1，即往后空一位。
+
+    > 往map里插入数据可以用m.insert(part<int,int>(10,10))
+    
+    ```c++
+    class Solution
+    {
+        public:
+        int romanToInt(string s)
+        {
+            int sum=0;
+            map<char,int> m;
+            m.insert(pair<char,int>('I',1));
+            m.insert(pair<char,int>('V',5));
+            m.insert(pair<char,int>('X',10));
+            m.insert(pair<char,int>('L',50));
+            m.insert(pair<char,int>('C',100));
+            m.insert(pair<char,int>('D',500));
+            m.insert(pair<char,int>('M',1000));
+            for(int i=0;i<s.length();i++)
+            {
+                if(m[s[i]]>=m[s[i+1]])
+                    sum+=m[s[i]];
+                else
+                {
+                    sum+=m[s[i+1]]-m[s[i]];
+                    i++;
+                }
+            }
+            return sum;
+         }
+    };
+    ```
+
+- 
+
+- 
+
+  
+
+  
+
+  
+
+  
+
+  
